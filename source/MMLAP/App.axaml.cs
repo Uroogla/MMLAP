@@ -16,7 +16,7 @@ using Avalonia.Media;
 using Avalonia.OpenGL;
 using Newtonsoft.Json;
 using ReactiveUI;
-using S2AP.Models;
+using MMLAP.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -26,15 +26,15 @@ using System.Reflection;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Timers;
-using static S2AP.Models.Enums;
+using static MMLAP.Models.Enums;
 
-namespace S2AP;
+namespace MMLAP;
 
 public partial class App : Application
 {
-    // TODO: Remember to set this in S2AP.Desktop as well.
-    public static string Version = "1.0.1";
-    public static List<string> SupportedVersions = ["1.0.0", "1.0.1"];
+    // TODO: Remember to set this in MMLAP.Desktop as well.
+    public static string Version = "0.0.1";
+    public static List<string> SupportedVersions = ["0.0.1"];
 
     public static MainWindowViewModel Context;
     public static ArchipelagoClient Client { get; set; }
@@ -305,13 +305,13 @@ public partial class App : Application
                 }
                 else if (versionValue == null)
                 {
-                    Log.Logger.Error($"The host's AP world version predates 1.0.0, but the client version is {Version}.");
+                    //Log.Logger.Error($"The host's AP world version predates 1.0.0, but the client version is {Version}.");
                     Log.Logger.Error("This will almost certainly result in errors.");
                 }
             }
             else
             {
-                Log.Logger.Error($"The host's AP world version predates 1.0.0, but the client version is {Version}.");
+                //Log.Logger.Error($"The host's AP world version predates 1.0.0, but the client version is {Version}.");
                 Log.Logger.Error("This will almost certainly result in errors.");
             }
             _requiredOrbs = int.Parse(Client.Options?.GetValueOrDefault("ripto_door_orbs", 0).ToString());
@@ -1352,50 +1352,11 @@ public partial class App : Application
             }
         }
     }
-    private static async void DeactivateBigHeadMode()
-    {
-        // Disables both big head mode and flat spyro.
-        Memory.Write(Addresses.BigHeadMode, (short)0);
-    }
-    private static async void ActivateBigHeadMode()
-    {
-        Memory.WriteByte(Addresses.SpyroHeight, (byte)(32));
-        Memory.WriteByte(Addresses.SpyroLength, (byte)(32));
-        Memory.WriteByte(Addresses.SpyroWidth, (byte)(32));
-        Memory.Write(Addresses.BigHeadMode, (short)(1));
-    }
-    private static async void ActivateFlatSpyroMode()
-    {
-        Memory.WriteByte(Addresses.SpyroHeight, (byte)(16));
-        Memory.WriteByte(Addresses.SpyroLength, (byte)(16));
-        Memory.WriteByte(Addresses.SpyroWidth, (byte)(2));
-        Memory.Write(Addresses.BigHeadMode, (short)0x100);
-    }
-    private static async void TurnSpyroColor(SpyroColor colorEnum)
-    {
-        Memory.Write(Addresses.SpyroColorAddress, (short)colorEnum);
-    }
     private static async void UnlockMoneybags(uint address)
     {
         // Flag the check as paid for, and set the price to 0.  Otherwise, we'll get back too many gems when beating Ripto.
         Memory.Write(address, 65536);
         Log.Logger.Information("If you are in the same zone as Moneybags, you can talk to him to complete the unlock for free.");
-    }
-    private static void LogItem(Item item)
-    {
-        // Not supported at this time.
-        /*var messageToLog = new LogListItem(new List<TextSpan>()
-            {
-                new TextSpan(){Text = $"[{item.Id.ToString()}] -", TextColor = new SolidColorBrush(Color.FromRgb(255, 255, 255))},
-                new TextSpan(){Text = $"{item.Name}", TextColor = new SolidColorBrush(Color.FromRgb(200, 255, 200))}
-            });
-        lock (_lockObject)
-        {
-            RxApp.MainThreadScheduler.Schedule(() =>
-            {
-                Context.ItemList.Add(messageToLog);
-            });
-        }*/
     }
 
     private void Client_MessageReceived(object? sender, MessageReceivedEventArgs e)
@@ -1408,47 +1369,6 @@ public partial class App : Application
         if (!e.Message.Parts.Any(x => x.Text == "[Hint]: ") || !_useQuietHints || !e.Message.Parts.Any(x => x.Text.Trim() == "(found)"))
         {
             Log.Logger.Information(JsonConvert.SerializeObject(e.Message));
-        }
-    }
-    private static void LogHint(LogMessage message)
-    {
-        var newMessage = message.Parts.Select(x => x.Text);
-
-        foreach (var hint in Context.HintList)
-        {
-            IEnumerable<string> hintText = hint.TextSpans.Select(y => y.Text);
-            if (newMessage.Count() != hintText.Count())
-            {
-                continue;
-            }
-            bool isMatch = true;
-            for (int i = 0; i < hintText.Count(); i++)
-            {
-                if (newMessage.ElementAt(i) != hintText.ElementAt(i))
-                {
-                    isMatch = false;
-                    break;
-                }
-            }
-            if (isMatch)
-            {
-                return; //Hint already in list
-            }
-        }
-        List<TextSpan> spans = new List<TextSpan>();
-        foreach (var part in message.Parts)
-        {
-            RxApp.MainThreadScheduler.Schedule(() =>
-            {
-                spans.Add(new TextSpan() { Text = part.Text, TextColor = new SolidColorBrush(Color.FromRgb(part.Color.R, part.Color.G, part.Color.B)) });
-            });
-        }
-        lock (_lockObject)
-        {
-            RxApp.MainThreadScheduler.Schedule(() =>
-            {
-                Context.HintList.Add(new LogListItem(spans));
-            });
         }
     }
     private static void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCollection<long> newCheckedLocations)
@@ -1485,32 +1405,6 @@ public partial class App : Application
             address++;
         }
     }
-    private static Dictionary<string, int> CalculateCurrentTalismans()
-    {
-        var summerCount = Client.ItemState?.ReceivedItems.Where(x => x != null && x.Name == "Summer Forest Talisman").Count() ?? 0;
-        summerCount = Math.Min(summerCount, 6);
-        var autumnCount = Client.ItemState?.ReceivedItems.Where(x => x != null && x.Name == "Autumn Plains Talisman").Count() ?? 0;
-        autumnCount = Math.Min(autumnCount, 8);
-        var currentLevel = Memory.ReadByte(Addresses.CurrentLevelAddress);
-        // Handle Elora in Summer Forest and the door to Crush by special casing talisman count in this level only.
-        if (currentLevel == (byte)LevelInGameIDs.SummerForest)
-        {
-            Memory.WriteByte(Addresses.TotalTalismanAddress, (byte)summerCount);
-            WriteStringToMemory(Addresses.SummerEloraStartText, Addresses.SummerEloraEndText, $"Hi, Spyro! You have @4{summerCount}@0 Summer Forest Talismans.");
-            WriteStringToMemory(Addresses.SummerEloraWarpStartText, Addresses.SummerEloraWarpEndText, $"Hi, Spyro! You have @4{summerCount}@0 Summer Forest Talismans.");
-        }
-        else if (currentLevel == (byte)LevelInGameIDs.AutumnPlains)
-        {
-            Memory.WriteByte(Addresses.TotalTalismanAddress, (byte)(summerCount + autumnCount));
-            WriteStringToMemory(Addresses.AutumnEloraStartText, Addresses.AutumnEloraEndText, $"Hi, Spyro! You have @4{summerCount + autumnCount }@0 Talismans.");
-            WriteStringToMemory(Addresses.AutumnEloraWarpStartText, Addresses.AutumnEloraWarpEndText, $"Hi, Spyro! You have @4{summerCount + autumnCount}@0 Talismans.");
-        }
-        return new Dictionary<string, int>() {
-            { "Summer Forest", summerCount },
-            { "Autumn Plains", autumnCount },
-            { "Total", summerCount + autumnCount }
-         };
-    }
     private static int CalculateCurrentOrbs()
     {
         var count = Client.ItemState?.ReceivedItems.Where(x => x != null && x.Name == "Orb").Count() ?? 0;
@@ -1518,46 +1412,9 @@ public partial class App : Application
         Memory.WriteByte(Addresses.TotalOrbAddress, (byte)(count));
         return count;
     }
-    private static int CalculateCurrentGems()
-    {
-        GemsanityOptions gemsanityOption = (GemsanityOptions)int.Parse(Client.Options?.GetValueOrDefault("enable_gemsanity", "0").ToString());
-        if (gemsanityOption == GemsanityOptions.Off)
-        {
-            return Memory.ReadShort(Addresses.TotalGemAddress);
-        }
-        uint levelGemCountAddress = Addresses.LevelGemsAddress;
-        int totalGems = 0;
-        int i = 0;
-        foreach (LevelData level in Helpers.GetLevelData())
-        {
-            if (!level.Name.Contains("Speedway"))
-            {
-                string levelName = level.Name;
-                int levelGemCount = Client.ItemState?.ReceivedItems?.Where(x => x != null && x.Name == $"{levelName} Red Gem").Count() ?? 0;
-                levelGemCount += 2 * (Client.ItemState?.ReceivedItems?.Where(x => x != null && x.Name == $"{levelName} Green Gem").Count() ?? 0);
-                levelGemCount += 5 * (Client.ItemState?.ReceivedItems?.Where(x => x != null && x.Name == $"{levelName} Blue Gem").Count() ?? 0);
-                levelGemCount += 10 * (Client.ItemState?.ReceivedItems?.Where(x => x != null && x.Name == $"{levelName} Gold Gem").Count() ?? 0);
-                levelGemCount += 25 * (Client.ItemState?.ReceivedItems?.Where(x => x != null && x.Name == $"{levelName} Pink Gem").Count() ?? 0);
-                levelGemCount += 50 * (Client.ItemState?.ReceivedItems?.Where(x => x != null && x.Name == $"{levelName} 50 Gems").Count() ?? 0);
-                Memory.Write(levelGemCountAddress, levelGemCount);
-                totalGems += levelGemCount;
-            } else
-            {
-                totalGems += Memory.ReadInt(levelGemCountAddress);
-            }
-            i++;
-            levelGemCountAddress += 4;
-        }
-        Memory.Write(Addresses.TotalGemAddress, totalGems);
-        return totalGems;
-    }
     private static int CalculateCurrentSkillPoints()
     {
         return Client.ItemState?.ReceivedItems.Where(x => x != null && x.Name == "Skill Point").Count() ?? 0;
-    }
-    private static int CalculateCurrentTokens()
-    {
-        return Client.ItemState?.ReceivedItems.Where(x => x != null && x.Name == "Dragon Shores Token").Count() ?? 0;
     }
     private static void OnConnected(object sender, EventArgs args)
     {

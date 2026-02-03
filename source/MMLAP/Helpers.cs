@@ -2,14 +2,14 @@
 using Archipelago.Core.Util;
 using Archipelago.MultiClient.Net.Models;
 using Avalonia.Logging;
-using S2AP.Models;
+using MMLAP.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using static S2AP.Models.Enums;
+using static MMLAP.Models.Enums;
 using Location = Archipelago.Core.Models.Location;
 namespace MMLAP
 {
