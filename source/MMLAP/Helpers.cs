@@ -1,4 +1,4 @@
-﻿using MMLAP.Models
+﻿using MMLAP.Models;
 using System.Collections.Generic;
 namespace MMLAP
 {
@@ -174,6 +174,155 @@ namespace MMLAP
             levelDataDict.Add(0x1E04, new LevelData("Ending", "Empty?", 0x1E, 0x04));
             levelDataDict.Add(0x1E05, new LevelData("Ending", "Tiny Kattelox", 0x1E, 0x05));
             return levelDataDict;
+        }
+        public static ItemData GetZennyItemData(uint quantity)
+        {
+            ItemData zennyItemData = new ItemData("Zenny", "Zenny", quantity, null, null, null);
+            return zennyItemData;
+        }
+        public static ItemData GetNothingItemData()
+        {
+            ItemData nothingItemData = new ItemData("Nothing", "Nothing", null, 0xFF, null, null);
+            return nothingItemData;
+        }
+        public static Dictionary<uint, ItemData> GetItemDataDict()
+        {
+            Dictionary<uint, ItemData> itemDataDict = new Dictionary<uint, ItemData>();
+            itemDataDict.Add(0x00, new ItemData("Buster Part", "Blaster Unit Omega", 1, 0x00, null, null));
+            itemDataDict.Add(0x01, new ItemData("Buster Part", "Sniper Unit Omega", 1, 0x01, null, null));
+            itemDataDict.Add(0x02, new ItemData("Buster Part", "Laser", 1, 0x02, null, null));
+            itemDataDict.Add(0x03, new ItemData("Buster Part", "Sniper Range", 1, 0x03, null, null));
+            itemDataDict.Add(0x04, new ItemData("Buster Part", "Turbo Battery", 1, 0x04, null, null));
+            itemDataDict.Add(0x05, new ItemData("Buster Part", "Power Raiser Omega", 1, 0x05, null, null));
+            itemDataDict.Add(0x06, new ItemData("Buster Part", "Range Booster Omega", 1, 0x06, null, null));
+            itemDataDict.Add(0x07, new ItemData("Buster Part", "Turbo Charger Omega", 1, 0x07, null, null));
+            itemDataDict.Add(0x08, new ItemData("Buster Part", "Blast Unit", 1, 0x08, null, null));
+            itemDataDict.Add(0x09, new ItemData("Buster Part", "Sniper Unit", 1, 0x09, null, null));
+            itemDataDict.Add(0x0A, new ItemData("Buster Part", "Power Raiser Alpha", 1, 0x0A, null, null));
+            itemDataDict.Add(0x0B, new ItemData("Buster Part", "Range Booster Alpha", 1, 0x0B, null, null));
+            itemDataDict.Add(0x0C, new ItemData("Buster Part", "Turbo Charger Alpha", 1, 0x0C, null, null));
+            itemDataDict.Add(0x0D, new ItemData("Buster Part", "Power Raiser", 1, 0x0D, null, null));
+            itemDataDict.Add(0x0E, new ItemData("Buster Part", "Range Booster", 1, 0x0E, null, null));
+            itemDataDict.Add(0x0F, new ItemData("Buster Part", "Turbo Charger", 1, 0x0F, null, null));
+            itemDataDict.Add(0x10, new ItemData("Buster Part", "Buster Max", 1, 0x10, null, null));
+            itemDataDict.Add(0x11, new ItemData("Buster Part", "Power Stream", 1, 0x11, null, null));
+            itemDataDict.Add(0x12, new ItemData("Buster Part", "Blaster Unit R", 1, 0x12, null, null));
+            itemDataDict.Add(0x13, new ItemData("Buster Part", "Buster Unit Omega", 1, 0x13, null, null));
+            itemDataDict.Add(0x14, new ItemData("Buster Part", "Omni-Unit Omega", 1, 0x14, null, null));
+            itemDataDict.Add(0x15, new ItemData("Buster Part", "Auto Battery", 1, 0x15, null, null));
+            itemDataDict.Add(0x16, new ItemData("Buster Part", "Sniper Scope", 1, 0x16, null, null));
+            itemDataDict.Add(0x17, new ItemData("Buster Part", "Rapid Striker", 1, 0x17, null, null));
+            itemDataDict.Add(0x18, new ItemData("Buster Part", "Gatling Gun", 1, 0x18, null, null));
+            itemDataDict.Add(0x19, new ItemData("Buster Part", "Omni Unit", 1, 0x19, null, null));
+            itemDataDict.Add(0x1A, new ItemData("Buster Part", "Power Blaster R", 1, 0x1A, null, null));
+            itemDataDict.Add(0x1B, new ItemData("Buster Part", "Power Blaster L", 1, 0x1B, null, null));
+            itemDataDict.Add(0x1C, new ItemData("Buster Part", "Machine Gun", 1, 0x1C, null, null));
+            itemDataDict.Add(0x1D, new ItemData("Buster Part", "Triple Access", 1, 0x1D, null, null));
+            itemDataDict.Add(0x1E, new ItemData("Buster Part", "Buster Unit", 1, 0x1E, null, null));
+            itemDataDict.Add(0x1F, new ItemData("Buster Part", "Rapid Fire", 1, 0x1F, null, null));
+            itemDataDict.Add(0x20, new ItemData("Special Item", "Helmet", 1, 0x20, null, null));
+            itemDataDict.Add(0x21, new ItemData("Special Item", "Jump Springs", 1, 0x21, null, null));
+            itemDataDict.Add(0x22, new ItemData("Special Item", "Jet Skates", 1, 0x22, null, null));
+            itemDataDict.Add(0x23, new ItemData("Special Item", "Life Gauge", 1, 0x23, null, null));
+            itemDataDict.Add(0x24, new ItemData("Special Item", "Energy Canteen", 1, 0x24, null, null));
+            itemDataDict.Add(0x25, new ItemData("Special Item", "Extra Pack", 1, 0x25, null, null));
+            itemDataDict.Add(0x26, new ItemData("Special Item", "Adapter Plug", 1, 0x26, null, null));
+            itemDataDict.Add(0x27, new ItemData("Special Item", "Refractor", 1, 0x27, null, null));
+            itemDataDict.Add(0x28, new ItemData("Special Item", "Refractor", 1, 0x28, null, null));
+            itemDataDict.Add(0x29, new ItemData("Special Item", "Refractor", 1, 0x29, null, null));
+            itemDataDict.Add(0x2A, new ItemData("Special Item", "Citizen's Card", 1, 0x2A, null, null));
+            itemDataDict.Add(0x2B, new ItemData("Special Item", "Class A License", 1, 0x2B, null, null));
+            itemDataDict.Add(0x2C, new ItemData("Special Item", "Class B License", 1, 0x2C, null, null));
+            itemDataDict.Add(0x2D, new ItemData("Special Item", "Bonne Key", 1, 0x2D, null, null));
+            itemDataDict.Add(0x2E, new ItemData("Special Item", "Starter Key", 1, 0x2E, null, null));
+            itemDataDict.Add(0x2F, new ItemData("Special Item", "Starter Key", 1, 0x2F, null, null));
+            itemDataDict.Add(0x30, new ItemData("Special Item", "Starter Key", 1, 0x30, null, null));
+            itemDataDict.Add(0x31, new ItemData("Special Item", "Starter Key", 1, 0x31, null, null));
+            itemDataDict.Add(0x32, new ItemData("Special Item", "Starter Key", 1, 0x32, null, null));
+            itemDataDict.Add(0x33, new ItemData("Special Item", "Starter Key", 1, 0x33, null, null));
+            itemDataDict.Add(0x34, new ItemData("Special Item", "ID Card", 1, 0x34, null, null));
+            itemDataDict.Add(0x35, new ItemData("Special Item", "ID Card", 1, 0x35, null, null));
+            itemDataDict.Add(0x36, new ItemData("Special Item", "ID Card", 1, 0x36, null, null));
+            itemDataDict.Add(0x37, new ItemData("Special Item", "Watcher' Key", 1, 0x37, null, null));
+            itemDataDict.Add(0x38, new ItemData("Special Item", "Sleeper' Key", 1, 0x38, null, null));
+            itemDataDict.Add(0x39, new ItemData("Special Item", "Dreamer' Key", 1, 0x39, null, null));
+            itemDataDict.Add(0x3A, new ItemData("Special Item", "Flak Jacket", 1, 0x3A, null, null));
+            itemDataDict.Add(0x3B, new ItemData("Special Item", "Kevlar Jacket", 1, 0x3B, null, null));
+            itemDataDict.Add(0x3C, new ItemData("Special Item", "Kevlar Jacket Omega", 1, 0x3C, null, null));
+            itemDataDict.Add(0x3D, new ItemData("Special Item", "Walkie-Talkie", 1, 0x3D, null, null));
+            itemDataDict.Add(0x3E, new ItemData("Special Item", "KEY-ITEM 1E", 1, 0x3E, null, null));
+            itemDataDict.Add(0x3F, new ItemData("Special Item", "(empty)", 1, 0x3F, null, null));
+            itemDataDict.Add(0x40, new ItemData("Normal Item", "Shield Repair", 1, 0x40, 0xBE420, 7));
+            itemDataDict.Add(0x41, new ItemData("Normal Item", "Hyper Cartridge", 1, 0x41, 0xBE420, 6));
+            itemDataDict.Add(0x42, new ItemData("Normal Item", "Chamelion Net", 1, 0x42, 0xBE420, 5));
+            itemDataDict.Add(0x43, new ItemData("Normal Item", "Defense Shield", 1, 0x43, 0xBE420, 4));
+            itemDataDict.Add(0x44, new ItemData("Normal Item", "Flower", 1, 0x44, 0xBE420, 3));
+            itemDataDict.Add(0x45, new ItemData("Normal Item", "Bag", 1, 0x45, 0xBE420, 2));
+            itemDataDict.Add(0x46, new ItemData("Normal Item", "Trunk", 1, 0x46, 0xBE420, 1));
+            itemDataDict.Add(0x47, new ItemData("Normal Item", "Pick", 1, 0x47, 0xBE420, 0));
+            itemDataDict.Add(0x48, new ItemData("Normal Item", "Saw", 1, 0x48, 0xBE421, 7));
+            itemDataDict.Add(0x49, new ItemData("Normal Item", "Lipstick", 1, 0x49, 0xBE421, 6));
+            itemDataDict.Add(0x4A, new ItemData("Normal Item", "Music Box", 1, 0x4A, 0xBE421, 5));
+            itemDataDict.Add(0x4B, new ItemData("Normal Item", "Old Bone", 1, 0x4B, 0xBE421, 4));
+            itemDataDict.Add(0x4C, new ItemData("Normal Item", "Old Heater", 1, 0x4C, 0xBE421, 3));
+            itemDataDict.Add(0x4D, new ItemData("Normal Item", "Old Doll", 1, 0x4D, 0xBE421, 2));
+            itemDataDict.Add(0x4E, new ItemData("Normal Item", "Antique Bell", 1, 0x4E, 0xBE421, 1));
+            itemDataDict.Add(0x4F, new ItemData("Normal Item", "Giant Horn", 1, 0x4F, 0xBE421, 0));
+            itemDataDict.Add(0x50, new ItemData("Normal Item", "Shiny Object", 1, 0x50, 0xBE422, 7));
+            itemDataDict.Add(0x51, new ItemData("Normal Item", "Old Shield", 1, 0x51, 0xBE422, 6));
+            itemDataDict.Add(0x52, new ItemData("Normal Item", "Shiny Red Stone", 1, 0x52, 0xBE422, 5));
+            itemDataDict.Add(0x53, new ItemData("Normal Item", "Stag Beetle", 1, 0x53, 0xBE422, 4));
+            itemDataDict.Add(0x54, new ItemData("Normal Item", "Beetle", 1, 0x54, 0xBE422, 3));
+            itemDataDict.Add(0x55, new ItemData("Normal Item", "Comic Book", 1, 0x55, 0xBE422, 2));
+            itemDataDict.Add(0x56, new ItemData("Normal Item", "Ring", 1, 0x56, 0xBE422, 1));
+            itemDataDict.Add(0x57, new ItemData("Normal Item", "EMPTY", 1, 0x57, 0xBE422, 0));
+            itemDataDict.Add(0x58, new ItemData("Normal Item", "Mine Parts Kit", 1, 0x58, 0xBE423, 7));
+            itemDataDict.Add(0x59, new ItemData("Normal Item", "Cannon Kit", 1, 0x59, 0xBE423, 6));
+            itemDataDict.Add(0x5A, new ItemData("Normal Item", "Grenade Kit", 1, 0x5A, 0xBE423, 5));
+            itemDataDict.Add(0x5B, new ItemData("Normal Item", "Blumebear Parts", 1, 0x5B, 0xBE423, 4));
+            itemDataDict.Add(0x5C, new ItemData("Normal Item", "Mystic Orb", 1, 0x5C, 0xBE423, 3));
+            itemDataDict.Add(0x5D, new ItemData("Normal Item", "Marlwolf Shell", 1, 0x5D, 0xBE423, 2));
+            itemDataDict.Add(0x5E, new ItemData("Normal Item", "Broken Motor", 1, 0x5E, 0xBE423, 1));
+            itemDataDict.Add(0x5F, new ItemData("Normal Item", "Broken Propeller", 1, 0x5F, 0xBE423, 0));
+            itemDataDict.Add(0x60, new ItemData("Normal Item", "Broken Cleaner", 1, 0x60, 0xBE424, 7));
+            itemDataDict.Add(0x61, new ItemData("Normal Item", "Bomb Schematic", 1, 0x61, 0xBE424, 6));
+            itemDataDict.Add(0x62, new ItemData("Normal Item", "Blunted Drill", 1, 0x62, 0xBE424, 5));
+            itemDataDict.Add(0x63, new ItemData("Normal Item", "Guidance Unit", 1, 0x63, 0xBE424, 4));
+            itemDataDict.Add(0x64, new ItemData("Normal Item", "Zetsabre", 1, 0x64, 0xBE424, 3));
+            itemDataDict.Add(0x65, new ItemData("Normal Item", "Pen Light", 1, 0x65, 0xBE424, 2));
+            itemDataDict.Add(0x66, new ItemData("Normal Item", "Old Launcher", 1, 0x66, 0xBE424, 1));
+            itemDataDict.Add(0x67, new ItemData("Normal Item", "Ancient Book", 1, 0x67, 0xBE424, 0));
+            itemDataDict.Add(0x68, new ItemData("Normal Item", "Arm Supporter", 1, 0x68, 0xBE425, 7));
+            itemDataDict.Add(0x69, new ItemData("Normal Item", "X Buster", 1, 0x69, 0xBE425, 6));
+            itemDataDict.Add(0x6A, new ItemData("Normal Item", "Weapon Plans", 1, 0x6A, 0xBE425, 5));
+            itemDataDict.Add(0x6B, new ItemData("Normal Item", "Prism Crystal", 1, 0x6B, 0xBE425, 4));
+            itemDataDict.Add(0x6C, new ItemData("Normal Item", "Spring Set", 1, 0x6C, 0xBE425, 3));
+            itemDataDict.Add(0x6D, new ItemData("Normal Item", "Safety Helmet", 1, 0x6D, 0xBE425, 2));
+            itemDataDict.Add(0x6E, new ItemData("Normal Item", "Rollerboard", 1, 0x6E, 0xBE425, 1));
+            itemDataDict.Add(0x6F, new ItemData("Normal Item", "Old Hoverjets", 1, 0x6F, 0xBE425, 0));
+            itemDataDict.Add(0x70, new ItemData("Normal Item", "Joint Plug", 1, 0x70, 0xBE426, 7));
+            itemDataDict.Add(0x71, new ItemData("Normal Item", "Broken Circuits", 1, 0x71, 0xBE426, 6));
+            itemDataDict.Add(0x72, new ItemData("Normal Item", "Main Core Shard", 1, 0x72, 0xBE426, 5));
+            itemDataDict.Add(0x73, new ItemData("Normal Item", "Sun-light", 1, 0x73, 0xBE426, 4));
+            itemDataDict.Add(0x74, new ItemData("Normal Item", "Rapidfire Barrel", 1, 0x74, 0xBE426, 3));
+            itemDataDict.Add(0x75, new ItemData("Normal Item", "Plastique", 1, 0x75, 0xBE426, 2));
+            itemDataDict.Add(0x76, new ItemData("Normal Item", "Bomb", 1, 0x76, 0xBE426, 1));
+            itemDataDict.Add(0x77, new ItemData("Normal Item", "Gatling Part", 1, 0x77, 0xBE426, 0));
+            itemDataDict.Add(0x78, new ItemData("Normal Item", "Flower Pearl", 1, 0x78, 0xBE427, 7));
+            itemDataDict.Add(0x79, new ItemData("Normal Item", "Autofire Barrel", 1, 0x79, 0xBE427, 6));
+            itemDataDict.Add(0x7A, new ItemData("Normal Item", "Generator Part", 1, 0x7A, 0xBE427, 5));
+            itemDataDict.Add(0x7B, new ItemData("Normal Item", "Target Sensor", 1, 0x7B, 0xBE427, 4));
+            itemDataDict.Add(0x7C, new ItemData("Normal Item", "Tele-lens", 1, 0x7C, 0xBE427, 3));
+            itemDataDict.Add(0x7D, new ItemData("Normal Item", "JUNK-ITEM 25", 1, 0x7D, 0xBE427, 2));
+            itemDataDict.Add(0x7E, new ItemData("Normal Item", "JUNK-ITEM 26", 1, 0x7E, 0xBE427, 1));
+            itemDataDict.Add(0x7F, new ItemData("Normal Item", "JUNK-ITEM 27", 1, 0x7F, 0xBE427, 0));
+            return itemDataDict;
+        }
+        public static List<LocationData> GetLocationDataList()
+        {
+            List<LocationData> locationDataList = new List<LocationData>();
+            //pass
+            return locationDataList;
         }
     }
 }

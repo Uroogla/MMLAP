@@ -2,31 +2,31 @@
 {
     public class ItemData
     {
-        public string Name { get; set; }
         public string Category { get; set; }
+        public string Name { get; set; }
+        public uint? Quantity { get; set; }
         public byte? ItemCode { get; set; }
-        public string? InventoryAddress { get; set; }
-        public int? InventoryAddressBitNumber { get; set; }
-        public int? Quantity { get; set; }
-        public bool IsSellable { get; set; }
+        public ulong? InventoryAddress { get; set; }
+        public uint? InventoryAddressBitNumber { get; set; }
+        //public bool IsSellable { get; set; }
 
         public ItemData(
-            string name,
             string category,
+            string name,
+            uint? quantity = null,
             byte? code = null,
-            string? address = null,
-            int? addressBit = null,
-            int? quantity = null,
-            bool isSellable = false
+            ulong? address = null,
+            uint? addressBit = null
+            ///bool isSellable = false
         )
         {
-            Name = name;
             Category = category;
+            Name = name;
+            Quantity = quantity;
             ItemCode = code;
             InventoryAddress = address;
             InventoryAddressBitNumber = addressBit;
-            Quantity = quantity;
-            IsSellable = isSellable;
+            //IsSellable = isSellable;
         }
     }
 }

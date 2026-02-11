@@ -1,8 +1,0 @@
-C:\Users\alexp\source\repos\MMLAP\source\MMLAP\obj\Release\net8.0\MMLAP.csproj.AssemblyReference.cache
-C:\Users\alexp\source\repos\MMLAP\source\MMLAP\obj\Release\net8.0\Avalonia\Resources.Inputs.cache
-C:\Users\alexp\source\repos\MMLAP\source\MMLAP\obj\Release\net8.0\Avalonia\resources
-C:\Users\alexp\source\repos\MMLAP\source\MMLAP\obj\Release\net8.0\MMLAP.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\alexp\source\repos\MMLAP\source\MMLAP\obj\Release\net8.0\MMLAP.AssemblyInfoInputs.cache
-C:\Users\alexp\source\repos\MMLAP\source\MMLAP\obj\Release\net8.0\MMLAP.AssemblyInfo.cs
-C:\Users\alexp\source\repos\MMLAP\source\MMLAP\obj\Release\net8.0\MMLAP.csproj.CoreCompileInputs.cache
-C:\Users\alexp\source\repos\MMLAP\source\MMLAP\obj\Release\net8.0\MMLAP.sourcelink.json
