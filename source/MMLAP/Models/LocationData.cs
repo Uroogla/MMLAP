@@ -1,36 +1,37 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace MMLAP.Models
+﻿namespace MMLAP.Models
 {
     public class LocationData
     {
         public string Name { get; set; }
         public string Category { get; set; }
-        public ulong CheckAddress { get; set; }
-        public int CheckAddressBit { get; set; }
         public LevelData LevelData { get; set; }
         public ItemData DefaultItemData { get; set; }
+        public ulong CheckAddress { get; set; }
+        public uint? CheckBitNumber { get; set; }
+        public byte? CheckByteValue { get; set; }
         public bool IsMissable { get; set; }
-        public string? ChestItemSignatureAddress { get; set; }
-        public string? TextBoxStartAddress { get; set; }
+        public ulong? ChestItemSignatureAddress { get; set; }
+        public ulong? TextBoxStartAddress { get; set; }
         public LocationData(
             string name,
             string category,
-            ulong checkAddress,
-            int checkAddressBit,
             LevelData levelData,
             ItemData defaultItemData,
+            ulong checkAddress,
+            uint? checkBitNumber,
+            byte? checkByteValue,
             bool isMissable = false,
-            string? chestItemSignatureAddress = null,
-            string? textBoxStartAddress = null
+            ulong? chestItemSignatureAddress = null,
+            ulong? textBoxStartAddress = null
         )
         {
             Name = name;
             Category = category;
-            CheckAddress = checkAddress;
-            CheckAddressBit = checkAddressBit;
             LevelData = levelData;
             DefaultItemData = defaultItemData;
+            CheckAddress = checkAddress;
+            CheckBitNumber = checkBitNumber;
+            CheckByteValue = checkByteValue;
             IsMissable = isMissable;
             ChestItemSignatureAddress = chestItemSignatureAddress;
             TextBoxStartAddress = textBoxStartAddress;
