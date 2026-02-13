@@ -7,7 +7,7 @@
         public LevelData LevelData { get; set; }
         public ItemData DefaultItemData { get; set; }
         public ulong CheckAddress { get; set; }
-        public uint? CheckBitNumber { get; set; }
+        public int? CheckBitNumber { get; set; }
         public byte? CheckByteValue { get; set; }
         public bool IsMissable { get; set; }
         public ulong? ChestItemSignatureAddress { get; set; }
@@ -18,7 +18,7 @@
             LevelData levelData,
             ItemData defaultItemData,
             ulong checkAddress,
-            uint? checkBitNumber,
+            int? checkBitNumber,
             byte? checkByteValue,
             bool isMissable = false,
             ulong? chestItemSignatureAddress = null,

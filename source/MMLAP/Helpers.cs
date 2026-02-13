@@ -1,4 +1,7 @@
-﻿using MMLAP.Models;
+﻿using Archipelago.Core.Models;
+using DynamicData;
+using MMLAP.Models;
+using System.Buffers.Text;
 using System.Collections.Generic;
 namespace MMLAP
 {
@@ -416,6 +419,28 @@ namespace MMLAP
             locationDataList.Add(new LocationData("Uptown Sub-City, Chest", "Container", levelDataDict[0x1D05], itemDataDict[0x39], 0xBE404, 0, null, false, 0x9F114, 0x8C735));
             locationDataList.Add(new LocationData("Flutter, Study chest", "Hole", levelDataDict[0x1B05], itemDataDict[0x61], 0xBE3E1, 5, null, false, null, 0x15333F));
             return locationDataList;
+        }
+        //public static List<ILocation> BuildLocationList(Dictionary<string, object> options)
+        public static List<ILocation> BuildLocationList()
+        {
+            List<LocationData> locationDataList = GetLocationDataList();
+            List<ILocation> locationList = new List<ILocation>();
+            foreach (LocationData locationData in locationDataList)
+            {
+                if (locationData.CheckBitNumber is not null) {
+                    Location location = new Location()
+                    {
+                        Id = 1001,
+                        Name = locationData.Name,
+                        Address = locationData.CheckAddress,
+                        CheckType = LocationCheckType.Bit,
+                        AddressBit = locationData.CheckBitNumber ?? -1,
+                        Category = locationData.Category
+                    };
+                    locationList.Add(location);
+                }
+            }
+            return locationList;
         }
     }
 }
