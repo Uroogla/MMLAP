@@ -11,6 +11,7 @@ namespace MMLAP.Helpers
         {
             return;
         }
+
         public static void ReceiveZenny(Item item)
         {
             uint oldZenny = Memory.ReadUInt(Addresses.CurrentZenny);
@@ -19,6 +20,7 @@ namespace MMLAP.Helpers
             _ = Memory.Write(Addresses.CurrentZenny, newZenny);
             return;
         }
+
         public static void ReceiveBusterPart(Item item)
         {
             Dictionary<long, ItemData> itemDataDict = LocationHelpers.GetItemDataDict();
@@ -38,6 +40,7 @@ namespace MMLAP.Helpers
             // If buster inventory is full then do nothing
             return;
         }
+
         public static void ReceiveSpecialItem(Item item)
         {
             Dictionary<long, ItemData> itemDataDict = LocationHelpers.GetItemDataDict();
@@ -45,6 +48,7 @@ namespace MMLAP.Helpers
             _ = Memory.WriteBit(itemData.InventoryAddress ?? 0, itemData.InventoryAddressBitNumber ?? 0, true);
             return;
         }
+
         public static void ReceiveNormalItem(Item item)
         {
             Dictionary<long, ItemData> itemDataDict = LocationHelpers.GetItemDataDict();

@@ -181,16 +181,23 @@ namespace MMLAP.Helpers
             };
             return levelDataDict;
         }
+        
         public static ItemData GetZennyItemData(uint quantity)
         {
-            ItemData zennyItemData = new(ItemCategory.Zenny, "Zenny", quantity, null, null, null);
-            return zennyItemData;
+            string name = quantity.ToString() + " Zenny";
+            return new(ItemCategory.Zenny, name, quantity, null, null, null);
         }
+        
         public static ItemData GetNothingItemData()
         {
-            ItemData nothingItemData = new(ItemCategory.Nothing, "Nothing", null, 0xFF, null, null);
-            return nothingItemData;
+            return new(ItemCategory.Nothing, "Nothing", null, 0xFF, null, null);
         }
+
+        public static ItemData GetAPItemData()
+        {
+            return new(ItemCategory.AP, "AP Item", null, null, null, null);
+        }
+        
         public static Dictionary<long, ItemData> GetItemDataDict()
         {
             Dictionary<long, ItemData> itemDataDict = new Dictionary<long, ItemData>
@@ -326,6 +333,7 @@ namespace MMLAP.Helpers
             };
             return itemDataDict;
         }
+        
         public static List<LocationData> GetLocationDataList()
         {
             Dictionary<ushort, LevelData> levelDataDict = GetLevelDataDict();
@@ -428,6 +436,7 @@ namespace MMLAP.Helpers
             return locationDataList;
         }
         //public static List<ILocation> BuildLocationList(Dictionary<string, object> options)
+        
         public static List<ILocation> BuildLocationList()
         {
             List<LocationData> locationDataList = GetLocationDataList();

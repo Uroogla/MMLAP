@@ -14,8 +14,10 @@ namespace MMLAP.Models
             Zenny = 1,
             Buster = 2,
             Special = 3,
-            Normal = 4
+            Normal = 4,
+            AP = 5
         }
+
         public enum LocationCategory
         {
             Container = 0,
