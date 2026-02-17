@@ -34,7 +34,7 @@ namespace MMLAP.Helpers
         public static readonly byte[] redAPItem = [0x89, 0x02, 0x15, 0x24, 0x4F, 0x1D, 0x44, 0x34, 0x3C, 0x89];
         public static readonly byte[] nothing = [0X3D, 0X3F, 0X44, 0X37, 0X38, 0X3D, 0X36];
         public static readonly byte[] newPage = [0x9F, 0x87, 0x04, 0x00];
-        public static readonly byte[] endWindow = [0x9F, 0xA9, 0x84, 0x04, 0x00, 0x00, 0x00];
+        public static readonly byte[] endWindow = [0x9F, 0xA9, 0x84, 0x04, 0x00];
 
         public static readonly Dictionary<char, byte> charDict = new()
         {
@@ -174,7 +174,7 @@ namespace MMLAP.Helpers
             return coloredEncoding;
         }
 
-        public static byte[] YouGotItem(ItemData item)
+        public static byte[] EncodeYouGotItemWindow(ItemData item)
         {
             List<ItemCategory> displayedItemCategories =
             [

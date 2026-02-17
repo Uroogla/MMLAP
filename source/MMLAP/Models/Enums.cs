@@ -23,5 +23,10 @@ namespace MMLAP.Models
             Container = 0,
             Hole = 1
         }
+
+        public enum CompletionGoal
+        {
+            Juno = 0
+        }
     }
 }
