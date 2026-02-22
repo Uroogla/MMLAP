@@ -2,7 +2,7 @@
 using Archipelago.Core.AvaloniaGUI.Models;
 using Archipelago.Core.AvaloniaGUI.ViewModels;
 using Archipelago.Core.AvaloniaGUI.Views;
-using Archipelago.Core.GameClients;
+using Archipelago.Core.Helpers;
 using Archipelago.Core.Models;
 using Archipelago.Core.Util;
 using Archipelago.MultiClient.Net;
@@ -40,18 +40,18 @@ public partial class App : Application
     public static List<string> SupportedVersions = ["0.0.1"];
 
     public static MainWindowViewModel Context;
-    public static ArchipelagoClient Client { get; set; }
-    private static string _playerName { get; set; }
+    public static ArchipelagoClient APClient { get; set; }
     public static List<ILocation> GameLocations { get; set; }
-    public static Dictionary<long, ItemData> scoutedLocationItemData {  get; set; }
-    private static readonly object _lockObject = new object();
+    public static Dictionary<long, ItemData> scoutedLocationItemData { get; set; }
+    private static string _playerName { get; set; }
     private static bool _hasSubmittedGoal { get; set; }
-    private static bool _useQuietHints { get; set; }
-    private static int _unlockedLevels { get; set; }
+    private static Timer _gameLoopTimer { get; set; }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
     }
+
     private static bool IsRunningAsAdministrator()
     {
         WindowsIdentity identity = WindowsIdentity.GetCurrent();
@@ -78,24 +78,21 @@ public partial class App : Application
         }
         base.OnFrameworkInitializationCompleted();
     }
+
     public void Start()
     {
         Context = new MainWindowViewModel("0.6.3 or later");
         Context.ClientVersion = Assembly.GetEntryAssembly().GetName().Version.ToString();
+
         Context.ConnectClicked += Context_ConnectClicked;
-        Context.CommandReceived += (e, a) =>
-        {
-            if (string.IsNullOrWhiteSpace(a.Command)) return;
-            Client?.SendMessage(a.Command);
-            HandleCommand(a.Command);
-        };
-        Context.ConnectButtonEnabled = true;
+        Context.CommandReceived += Context_CommandReceived;
+        Context.OverlayEnabled = true;
         Context.AutoscrollEnabled = true;
-        // TODO: Autopopulate based on last connection.
-        //Context.Host = "Hello World";
+        Context.ConnectButtonEnabled = true;
+
         _hasSubmittedGoal = false;
-        _useQuietHints = true;
-        Log.Logger.Information("This Archipelago Client is compatible only with the USA release of Mega Man Legends.");
+
+        Log.Logger.Information("This Archipelago Client is compatible only with the NTSC-U release of Mega Man Legends.");
         Log.Logger.Information("Trying to play with a different version will not work as intended.");
         if (!IsRunningAsAdministrator())
         {
@@ -104,14 +101,31 @@ public partial class App : Application
         }
     }
 
+    private void Context_CommandReceived(object? sender, ArchipelagoCommandEventArgs a)
+    {
+        if (string.IsNullOrWhiteSpace(a.Command)) return;
+        APClient.SendMessage(a.Command);
+        string command = a.Command.Trim().ToLower();
+        switch (command)
+        {
+            case "reload":
+                Log.Logger.Information("Clearing the game state.  Please reconnect to the server while in game to refresh received items.");
+                APClient.ItemManager.ForceReloadAllItems();
+                break;
+            default:
+                Log.Logger.Information("Command not recognized.");
+                break;
+        }
+    }
+
     private void HandleCommand(string command)
     {
-        if (Client == null || Client.ItemState == null || Client.CurrentSession == null) return;
+        if (APClient == null || APClient.ItemManager == null || APClient.CurrentSession == null) return;
         switch (command)
         {
             case "showGoal":
-                CompletionGoal goal = (CompletionGoal)int.Parse(Client.Options?.GetValueOrDefault("goal", 0).ToString());
-                string goalText = "";
+                CompletionGoal goal = (CompletionGoal)int.Parse(APClient.Options?.GetValueOrDefault("goal", 0).ToString());
+                string goalText;
                 switch (goal)
                 {
                     case CompletionGoal.Juno:
@@ -125,56 +139,56 @@ public partial class App : Application
                 break;
         }
     }
+
     private async void Context_ConnectClicked(object? sender, ConnectClickedEventArgs e)
     {
-        if (Client != null)
+        if (APClient != null)
         {
-            Client.CancelMonitors();
-            Client.Connected -= OnConnected;
-            Client.Disconnected -= OnDisconnected;
-            Client.ItemReceived -= ItemReceived;
-            Client.MessageReceived -= Client_MessageReceived;
-            Client.LocationCompleted -= Client_LocationCompleted;
-            Client.CurrentSession.Locations.CheckedLocationsUpdated -= Locations_CheckedLocationsUpdated;
+            APClient.CancelMonitors();
+            APClient.Connected -= OnConnected;
+            APClient.Disconnected -= OnDisconnected;
+            APClient.ItemReceived -= ItemReceived;
+            APClient.MessageReceived -= Client_MessageReceived;
+            APClient.LocationCompleted -= Client_LocationCompleted;
+            APClient.CurrentSession.Locations.CheckedLocationsUpdated -= Locations_CheckedLocationsUpdated;
             _unlockedLevels = 0;
         }
-        DuckstationClient? client = null;
+        GameClient? gameClient = null;
         try
         {
-            client = new DuckstationClient();
+            gameClient = new GameClient("duckstation");
         }
         catch (ArgumentException ex)
         {
             Log.Logger.Warning("Duckstation not running, open Duckstation and launch the game before connecting!");
             return;
         }
-        var DuckstationConnected = client.Connect();
+        bool DuckstationConnected = gameClient.Connect();
         if (!DuckstationConnected)
         {
             Log.Logger.Warning("Duckstation not running, open Duckstation and launch the game before connecting!");
             return;
         }
-        Client = new ArchipelagoClient(client);
-
+        APClient = new ArchipelagoClient(gameClient);
         Memory.GlobalOffset = Memory.GetDuckstationOffset();
 
-        Client.Connected += OnConnected;
-        Client.Disconnected += OnDisconnected;
+        APClient.Connected += OnConnected;
+        APClient.Disconnected += OnDisconnected;
+        APClient.LocationCompleted += Client_LocationCompleted;
+        APClient.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
+        APClient.MessageReceived += Client_MessageReceived;
+        APClient.ItemReceived += ItemReceived;
+        APClient.EnableLocationsCondition = () => Helpers.IsInGame();
 
-        await Client.Connect(e.Host, "Mega Man Legends", "save1");
-        if (!Client.IsConnected)
+        await APClient.Connect(e.Host, "Mega Man Legends", "save1");
+        if (!APClient.IsConnected)
         {
             Log.Logger.Error("Your host seems to be invalid.  Please confirm that you have entered it correctly.");
             return;
         }
 
-        Client.LocationCompleted += Client_LocationCompleted;
-        Client.CurrentSession.Locations.CheckedLocationsUpdated += Locations_CheckedLocationsUpdated;
-        Client.MessageReceived += Client_MessageReceived;
-        Client.ItemReceived += ItemReceived;
-        Client.EnableLocationsCondition = () => Helpers.IsInGame();
         _playerName = e.Slot;
-        await Client.Login(e.Slot, !string.IsNullOrWhiteSpace(e.Password) ? e.Password : null);
+        await APClient.Login(e.Slot, !string.IsNullOrWhiteSpace(e.Password) ? e.Password : null);
         if (Client.Options?.Count > 0)
         {
             // GemsanityOptions gemsanityOption = (GemsanityOptions)int.Parse(Client.Options?.GetValueOrDefault("enable_gemsanity", "0").ToString());
@@ -202,17 +216,14 @@ public partial class App : Application
                 }
                 else if (versionValue == null)
                 {
-                    //Log.Logger.Error($"The host's AP world version predates 1.0.0, but the client version is {Version}.");
                     Log.Logger.Error("This will almost certainly result in errors.");
                 }
             }
             else
             {
-                //Log.Logger.Error($"The host's AP world version predates 1.0.0, but the client version is {Version}.");
                 Log.Logger.Error("This will almost certainly result in errors.");
             }
             //_requiredOrbs = int.Parse(Client.Options?.GetValueOrDefault("ripto_door_orbs", 0).ToString());
-
             GameLocations = LocationHelpers.BuildLocationList();
             GameLocations = GameLocations.Where(x => x != null && !Client.CurrentSession.Locations.AllLocationsChecked.Contains(x.Id)).ToList();
             Client.MonitorLocations(GameLocations);
@@ -227,16 +238,17 @@ public partial class App : Application
 
     private void Client_LocationCompleted(object? sender, LocationCompletedEventArgs e)
     {
-        if (Client.ItemState == null || Client.CurrentSession == null) return;
+        if (APClient.LocationManager == null || APClient.CurrentSession == null) return;
 
         // Use scouted location item to rewrite textbox
 
+        // Do goal completions need to be included as locations?
         CheckGoalCondition();
     }
 
-    private async void ItemReceived(object? o, ItemReceivedEventArgs args)
+    private async void ItemReceived(object? sender, ItemReceivedEventArgs args)
     {
-        if (Client.CurrentSession == null) return;
+        if (APClient.CurrentSession == null) return;
         Log.Logger.Debug($"Item Received: {JsonConvert.SerializeObject(args.Item)}");
         switch (args.Item)
         {
@@ -254,16 +266,42 @@ public partial class App : Application
                 Console.WriteLine($"Item not recognised. ({args.Item.Name}) Skipping"); break;
         };
     }
-    
+
+    private static async void ModifyGameLoop(object? sender, ElapsedEventArgs e)
+    {
+        if (!Helpers.IsInGame() || APClient.ItemManager == null || APClient.CurrentSession == null)
+        {
+            return;
+        }
+        try
+        {
+            // Avoid inadvertantly messing with the Atlas and Options overlays when loaded in on the pause screen.
+            // This can result in corrupted save files.
+            //GameStatus status = (GameStatus)Memory.ReadByte(Addresses.GetVersionAddress(Addresses.GameStatus));
+            //if (status == GameStatus.Paused)
+            //{
+            //    return;
+            //}
+            CheckGoalCondition();
+        }
+        catch (Exception ex)
+        {
+            Log.Logger.Warning("Encountered an error while managing the game loop.");
+            Log.Logger.Warning(ex.ToString());
+            Log.Logger.Warning("This is not necessarily a problem if it happens during release or collect.");
+        }
+    }
+
     private static void CheckGoalCondition()
     {
         if (
-            Client == null ||
-            Client.CurrentSession == null ||
-            Client.CurrentSession.Locations == null ||
-            Client.CurrentSession.Locations.AllLocationsChecked == null ||
-            Client.ItemState == null ||
+            APClient == null ||
+            APClient.CurrentSession == null ||
+            APClient.CurrentSession.Locations == null ||
+            APClient.CurrentSession.Locations.AllLocationsChecked == null ||
+            APClient.ItemManager == null ||
             GameLocations == null
+            // check in game?
         )
         {
             return;
@@ -273,20 +311,24 @@ public partial class App : Application
             return;
         }
         
-        int goal = int.Parse(Client.Options?.GetValueOrDefault("goal", 0).ToString());
-        //switch ((CompletionGoal)goal)
-        //{
-        //    case CompletionGoal.Ripto:
-        //        Client.SendGoalCompletion();
-        //        _hasSubmittedGoal = true;
-        //        break;
-        //};
+        int goal = int.Parse(APClient.Options?.GetValueOrDefault("goal", 0).ToString());
+        bool isGoalComplete = (CompletionGoal)goal switch
+        {
+            CompletionGoal.Juno => Memory.ReadBit(Addresses.GoalJuno.Address, Addresses.GoalJuno.BitNumber ?? 0),
+            _ => false
+        };
+        if (isGoalComplete)
+        {
+            APClient.SendGoalCompletion();
+            _hasSubmittedGoal = true;
+        }
     }
 
     private static async void Client_MessageReceived(object? sender, MessageReceivedEventArgs e)
     {
         Log.Logger.Information(JsonConvert.SerializeObject(e.Message));
     }
+
     private static async void Locations_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCollection<long> newCheckedLocations)
     {
         if (Client.ItemState == null || Client.CurrentSession == null) return;
@@ -296,28 +338,31 @@ public partial class App : Application
         }
         CheckGoalCondition();
     }
-    /**
-     * Writes a block of text to memory. endAddress will generally be the null terminator and will not be written to.
-     */
 
-    private static async void OnConnected(object sender, EventArgs args)
+    private static async void OnConnected(object? sender, EventArgs args)
     {
+        // Start gameplay loop
+        _gameLoopTimer = new Timer();
+        _gameLoopTimer.Elapsed += new ElapsedEventHandler(ModifyGameLoop);
+        _gameLoopTimer.Interval = 500;
+        _gameLoopTimer.Enabled = true;
+
         // Load locations and start monitoring
         List<ILocation> locations = LocationHelpers.BuildLocationList();
-        await Client.MonitorLocationsAsync(locations);
+        await APClient.MonitorLocationsAsync(locations);
 
         // Scout locations for items
-        long[] locationIds = locations.Select(loc => (long)loc.Id).ToArray();
-        ArchipelagoSession session = Client.CurrentSession;
+        long[] locationIds = (from loc in locations select (long)loc.Id).ToArray();
+        ArchipelagoSession session = APClient.CurrentSession;
         Dictionary<long, ScoutedItemInfo> scoutedLocations = await session.Locations.ScoutLocationsAsync(locationIds);
         Dictionary<long, ItemData> itemDataDict = LocationHelpers.GetItemDataDict();
         scoutedLocationItemData = scoutedLocations.Keys.ToDictionary(locationId => locationId, locationId => itemDataDict[scoutedLocations[locationId].ItemId]);
 
         Log.Logger.Information("Connected to Archipelago");
-        Log.Logger.Information($"Playing {Client.CurrentSession.ConnectionInfo.Game} as {Client.CurrentSession.Players.GetPlayerName(Client.CurrentSession.ConnectionInfo.Slot)}");
+        Log.Logger.Information($"Playing {APClient.CurrentSession.ConnectionInfo.Game} as {APClient.CurrentSession.Players.GetPlayerName(APClient.CurrentSession.ConnectionInfo.Slot)}");
     }
 
-    private static async void OnDisconnected(object sender, EventArgs args)
+    private static async void OnDisconnected(object? sender, EventArgs args)
     {
         Log.Logger.Information("Disconnected from Archipelago");
         // Avoid ongoing timers affecting a new game.
