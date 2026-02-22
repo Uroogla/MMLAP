@@ -170,7 +170,7 @@ namespace MMLAP.Helpers
             coloredEncoding[0] = 0x89;
             coloredEncoding[1] = textColor;
             encoding.CopyTo(coloredEncoding, 2);
-            coloredEncoding[coloredEncoding.Length + 2] = 0x89;
+            coloredEncoding[^1] = 0x89;
             return coloredEncoding;
         }
 

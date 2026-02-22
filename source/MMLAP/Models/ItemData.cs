@@ -14,6 +14,6 @@
         public short? Quantity { get; set; } = quantity;
         public byte? ItemCode { get; set; } = itemCode;
         public AddressData? InventoryAddressData { get; set; } = inventoryAddressData;
-        public bool IsFiller { get; set; }
+        public bool IsFiller { get; set; } = isFiller;
     }
 }

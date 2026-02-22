@@ -44,16 +44,20 @@ namespace MMLAP.Helpers
         public static void ReceiveSpecialItem(Item item)
         {
             Dictionary<long, ItemData> itemDataDict = LocationHelpers.GetItemDataDict();
-            ItemData itemData = itemDataDict[item.Id];
-            _ = Memory.WriteBit(itemData.InventoryAddressData.Address, itemData.InventoryAddressData.BitNumber ?? 0, true);
+            if (itemDataDict.TryGetValue(item.Id, out ItemData? itemData) && itemData.InventoryAddressData != null)
+            {
+                _ = Memory.WriteBit(itemData.InventoryAddressData.Address, itemData.InventoryAddressData.BitNumber ?? 0, true);
+            }
             return;
         }
 
         public static void ReceiveNormalItem(Item item)
         {
             Dictionary<long, ItemData> itemDataDict = LocationHelpers.GetItemDataDict();
-            ItemData itemData = itemDataDict[item.Id];
-            _ = Memory.WriteBit(itemData.InventoryAddressData.Address, itemData.InventoryAddressData.BitNumber ?? 0, true);
+            if (itemDataDict.TryGetValue(item.Id, out ItemData? itemData) && itemData.InventoryAddressData != null)
+            {
+                _ = Memory.WriteBit(itemData.InventoryAddressData.Address, itemData.InventoryAddressData.BitNumber ?? 0, true);
+            }
             return;
         }
     }
