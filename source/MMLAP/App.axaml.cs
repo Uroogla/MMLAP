@@ -272,15 +272,15 @@ public partial class App : Application
     private static bool LocationManager_EnableLocationsCondition()
     {
         bool[] conditions = [
-            Memory.ReadBit(Addresses.ScreenWipeFlag.Address, Addresses.ScreenWipeFlag.BitNumber??0),
-            Memory.ReadBit(Addresses.LoadingFlag.Address, Addresses.LoadingFlag.BitNumber??0),
-            Memory.ReadBit(Addresses.CutsceneFlag.Address, Addresses.CutsceneFlag.BitNumber??0),
-            Memory.ReadBit(Addresses.DungeonMapFlag.Address, Addresses.DungeonMapFlag.BitNumber??0),
-            Memory.ReadBit(Addresses.PauseMenuFlag.Address, Addresses.PauseMenuFlag.BitNumber??0),
-            Memory.ReadBit(Addresses.SaveDataMenuFlag.Address, Addresses.SaveDataMenuFlag.BitNumber??0),
-            Memory.ReadByte(Addresses.TitleScreen.Address) != 0xA4
+            //Memory.ReadBit(Addresses.ScreenWipeFlag.Address, Addresses.ScreenWipeFlag.BitNumber??0),
+            //Memory.ReadBit(Addresses.LoadingFlag.Address, Addresses.LoadingFlag.BitNumber??0),
+            //Memory.ReadBit(Addresses.DungeonMapFlag.Address, Addresses.DungeonMapFlag.BitNumber??0),
+            //Memory.ReadBit(Addresses.PauseMenuFlag.Address, Addresses.PauseMenuFlag.BitNumber??0),
+            !Memory.ReadBit(Addresses.CameraAlteredFlag.Address, Addresses.CameraAlteredFlag.BitNumber??0),
+            !Memory.ReadBit(Addresses.SaveDataMenuFlag.Address, Addresses.SaveDataMenuFlag.BitNumber??0),
+            Memory.ReadByte(Addresses.TitleScreen.Address) == 0xA4
         ];
-        return conditions.All(value => !value);
+        return conditions.All(value => value);
     }
 
     private async void ItemManager_ItemReceived(object? sender, ItemReceivedEventArgs args)
@@ -337,7 +337,7 @@ public partial class App : Application
             APClient.ItemManager == null ||
             GameLocations == null ||
             _hasSubmittedGoal ||
-            !Helpers.IsInGame()
+            !LocationManager_EnableLocationsCondition()
         )
         {
             return;
@@ -366,7 +366,7 @@ public partial class App : Application
     private static async void CurrentSession_CheckedLocationsUpdated(System.Collections.ObjectModel.ReadOnlyCollection<long> newCheckedLocations)
     {
         if (APClient.ItemManager == null || APClient.CurrentSession == null) return;
-        if (!Helpers.IsInGame())
+        if (!LocationManager_EnableLocationsCondition())
         {
             Log.Logger.Error("Check sent while not in game. Please report this in the Discord thread!");
         }
