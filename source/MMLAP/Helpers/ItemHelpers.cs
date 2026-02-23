@@ -24,17 +24,19 @@ namespace MMLAP.Helpers
         public static void ReceiveBusterPart(Item item)
         {
             Dictionary<long, ItemData> itemDataDict = LocationHelpers.GetItemDataDict();
-            ItemData itemData = itemDataDict[item.Id];
-            ulong busterInv = Addresses.UnequippedBusterInvStart.Address;
-            for (uint i = 0; i < 34; i++)
+            if (itemDataDict.TryGetValue(item.Id, out ItemData? itemData))
             {
-                ulong busterInvSlot = busterInv + i;
-                byte invSlotVal = Memory.ReadByte(busterInvSlot);
-                if (invSlotVal == 0)
+                ulong busterInv = Addresses.UnequippedBusterInvStart.Address;
+                for (uint i = 0; i < 34; i++)
                 {
-                    // Offset of 1 is intended for buster part code conversion
-                    Memory.Write(busterInvSlot, (itemData.ItemCode ?? -1) + 1);
-                    return;
+                    ulong busterInvSlot = busterInv + i;
+                    byte invSlotVal = Memory.ReadByte(busterInvSlot);
+                    if (invSlotVal == 0)
+                    {
+                        // Offset of 1 is intended for buster part code conversion
+                        Memory.Write(busterInvSlot, (itemData.ItemCode ?? -1) + 1);
+                        return;
+                    }
                 }
             }
             // If buster inventory is full then do nothing
