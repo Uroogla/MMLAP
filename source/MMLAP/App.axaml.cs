@@ -135,7 +135,7 @@ public partial class App : Application
                 {
                     goalText = "Unknown.";
                 }
-                Log.Logger.Information($"Your goal is: {goalText}.");
+                Log.Logger.Information($"Your goal is: {goalText}");
                 break;
             default:
                 Log.Logger.Information("Command not recognized. Did you mean one of the following?\n  [reload]: Forces all items to reload\n  [goal]: Show current goal.");
