@@ -19,8 +19,8 @@ class MMLWorld(World):
 
     game = "MegaMan Legends"
 
-    options_dataclass = mml_options.APQuestOptions
-    options: mml_options.APQuestOptions
+    options_dataclass = mml_options.MMLOptions
+    options: mml_options.MMLOptions
 
     location_name_to_id = locations.LOCATION_NAME_TO_ID
     item_name_to_id = items.ITEM_NAME_TO_ID
