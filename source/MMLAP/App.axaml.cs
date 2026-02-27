@@ -162,8 +162,8 @@ public partial class App : Application
             if (APClient.LocationManager != null)
             {
                 APClient.LocationManager.CancelMonitors();
-                APClient.LocationManager.LocationCompleted -= LocationManager_LocationCompleted;
                 APClient.LocationManager.EnableLocationsCondition = null;
+                APClient.LocationManager.LocationCompleted -= LocationManager_LocationCompleted;
             }
             if (APClient.CurrentSession != null)
             {
@@ -219,14 +219,13 @@ public partial class App : Application
 
         // Subscribe to item and location events
         APClient.ItemManager.ItemReceived += ItemManager_ItemReceived;
-        APClient.LocationManager.LocationCompleted += LocationManager_LocationCompleted;
         APClient.LocationManager.EnableLocationsCondition = LocationManager_EnableLocationsCondition;
+        APClient.LocationManager.LocationCompleted += LocationManager_LocationCompleted;
         APClient.CurrentSession.Locations.CheckedLocationsUpdated += CurrentSession_CheckedLocationsUpdated;
 
         // TODO: parse options
         GameLocations = LocationHelpers.BuildLocationList(APClient.Options);
         GameLocations = GameLocations.Where(x => x != null && !APClient.CurrentSession.Locations.AllLocationsChecked.Contains(x.Id)).ToList();
-        await APClient.MonitorLocationsAsync(GameLocations);
 
         // Scout location item data for future use
         long[] locationIds = GameLocations.Select(loc => (long)loc.Id).ToArray();
@@ -256,13 +255,16 @@ public partial class App : Application
             Log.Logger.Error("Unable to retrieve apworldversion from slot data.");
         }
         Log.Logger.Information("Warnings and errors above are okay if this is your first time connecting to this multiworld server.");
+        
+        await APClient.MonitorLocationsAsync(GameLocations);
+        
         Context.ConnectButtonEnabled = true;
         return;
     }
 
     private void LocationManager_LocationCompleted(object? sender, LocationCompletedEventArgs e)
     {
-        if (APClient.LocationManager != null || APClient.CurrentSession != null)
+        if (APClient.LocationManager != null && APClient.CurrentSession != null)
         {
             // Use scouted location item to rewrite textbox
             Dictionary<int, LocationData> locationDataDict = LocationHelpers.GetLocationDataDict();
@@ -270,7 +272,7 @@ public partial class App : Application
             if (locationData.TextBoxStartAddress != null)
             {
                 ItemData itemData = scoutedLocationItemData[e.CompletedLocation.Id];
-                Memory.WriteByteArray(locationData.TextBoxStartAddress ?? 0, TextHelpers.EncodeYouGotItemWindow(itemData), Archipelago.Core.Util.Enums.Endianness.Big); // TODO: Is this big endian?
+                Memory.WriteByteArray(locationData.TextBoxStartAddress ?? 0, TextHelpers.EncodeYouGotItemWindow(itemData), Archipelago.Core.Util.Enums.Endianness.Little); // TODO: Is this big endian?
             }
         }
         return;
@@ -279,10 +281,10 @@ public partial class App : Application
     private static bool LocationManager_EnableLocationsCondition()
     {
         bool[] conditions = [
-            //Memory.ReadBit(Addresses.ScreenWipeFlag.Address, Addresses.ScreenWipeFlag.BitNumber??0),
-            //Memory.ReadBit(Addresses.LoadingFlag.Address, Addresses.LoadingFlag.BitNumber??0),
-            //Memory.ReadBit(Addresses.DungeonMapFlag.Address, Addresses.DungeonMapFlag.BitNumber??0),
-            //Memory.ReadBit(Addresses.PauseMenuFlag.Address, Addresses.PauseMenuFlag.BitNumber??0),
+            !Memory.ReadBit(Addresses.ScreenWipeFlag.Address, Addresses.ScreenWipeFlag.BitNumber??0),
+            !Memory.ReadBit(Addresses.LoadingFlag.Address, Addresses.LoadingFlag.BitNumber??0),
+            //!Memory.ReadBit(Addresses.DungeonMapFlag.Address, Addresses.DungeonMapFlag.BitNumber??0),
+            //!Memory.ReadBit(Addresses.PauseMenuFlag.Address, Addresses.PauseMenuFlag.BitNumber??0),
             !Memory.ReadBit(Addresses.CameraAlteredFlag.Address, Addresses.CameraAlteredFlag.BitNumber??0),
             !Memory.ReadBit(Addresses.SaveDataMenuFlag.Address, Addresses.SaveDataMenuFlag.BitNumber??0),
             Memory.ReadByte(Addresses.TitleScreen.Address) == 0xA4
@@ -323,6 +325,7 @@ public partial class App : Application
         }
         try
         {
+            //Log.Logger.Information($"Locations enabled: {LocationManager_EnableLocationsCondition().ToString()}");
             CheckGoalCondition();
         }
         catch (Exception ex)
